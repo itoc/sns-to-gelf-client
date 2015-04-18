@@ -1,0 +1,17 @@
+{
+  "name": "sns_to_gelf_client",
+  "version": "1.0.0",
+  "description": "This program will run as a simple HTTP server allowing SNS to push messages into Graylog in GELF format.",
+  "main": "server.js",
+  "dependencies": {
+    "aws-snsclient": "*",
+    "gelf": "*",
+    "moment": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server"
+  },
+  "author": "David Nedved",
+  "license": "GPL3"
+}
