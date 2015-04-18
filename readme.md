@@ -3,20 +3,20 @@ SNS to GELF Client
 
 This program will run as a simple HTTP server allowing SNS to push messages into Graylog via the standardised GELF format
 
-##### To install / run locally:
+#### To install / run locally:
 
 ```bash
 npm install
 ```
 
-##### To run on beanstalk:
+#### To run on beanstalk:
 - Zip up package.json and any required files
 - Upload ZIP to beanstalk and it will be deployed!
 
-##### To use:
+#### To use:
 Setup SNS to point to the HTTP URL of your service, the service will auto-confirm any new SNS registration topics!
 
-##### Configuration options (passed as environment variables):
+#### Configuration options (passed as environment variables):
 
 ```javascript
 // Configuration Options / Environment Variables:
@@ -29,7 +29,7 @@ Setup SNS to point to the HTTP URL of your service, the service will auto-confir
 //      GELF_TRANSPORT_TYPE (String, either 'wan' or 'lan', defaults to 'wan')
 ```
 
-##### Installing as a service
+#### Installing as a service:
 
 ```bash
 mkdir -p /opt && cd /opt
