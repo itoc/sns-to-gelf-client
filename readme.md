@@ -5,7 +5,9 @@ This program will run as a simple HTTP server allowing SNS to push messages into
 
 ##### To install / run locally:
 
-```npm install```
+```bash
+npm install
+```
 
 ##### To run on beanstalk:
 - Zip up package.json and any required files
