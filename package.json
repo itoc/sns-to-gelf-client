@@ -6,7 +6,8 @@
   "dependencies": {
     "aws-snsclient": "*",
     "gelf": "*",
-    "moment": "*"
+    "moment": "*",
+    "underscore": "*"
   },
   "devDependencies": {},
   "scripts": {

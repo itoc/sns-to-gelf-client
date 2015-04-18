@@ -13,7 +13,7 @@
 //      CONSOLE_DEBUG       (String, true/false - provides verbose debugging)
 //      GELF_SERVER         (String, provide hostname or IP)
 //      GELF_SERVER_PORT    (Integer, defaults to: 12201)
-//      GELF_CHUNK_SIZE     (Integer, defaults to: 1420 - set to 8154 if you're running on LAN nor WAN.)
+//      GELF_CHUNK_SIZE     (Integer, defaults to: 8154 - set to 8154 if you're running on LAN and 1420 for WAN mode.)
 //      GELF_TRANSPORT_TYPE (String, either 'wan' or 'lan', defaults to 'wan')
 
 // --------------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ if(process.env.HTTP_LISTEN_PORT) {
 if(process.env.GELF_CHUNK_SIZE) {
     var GELF_CHUNK_SIZE = process.env.GELF_CHUNK_SIZE;
 } else {
-    var GELF_CHUNK_SIZE = 1420;
+    var GELF_CHUNK_SIZE = 8154;
 }
 
 if(process.env.GELF_TRANSPORT_TYPE) {
@@ -54,7 +54,8 @@ if(process.env.GELF_SERVER_PORT) {
 var http = require('http'),
     SNSClient = require('aws-snsclient'),
     Gelf = require('gelf'),
-    moment = require('moment');
+    moment = require('moment'),
+    _ = require('underscore');
 
 var gelf = new Gelf({
     graylogPort: GELF_SERVER_PORT,
@@ -68,25 +69,56 @@ var auth = {
     verify: false
 };
 
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 // If message is a legit SNS message post it to GELF Server
 var client = SNSClient(auth, function(err, message) {
 
     if(process.env.CONSOLE_DEBUG) console.log(message);
 
     var aws_account_id = message.TopicArn.split(":");
-    var message = {
-        "Type": message.type,
+    var server_message = {
+        "Type": message['Type'],
         "facility": "AWS-SNS",
         "SNS-MessageId": message.MessageId,
         "SNS-TopicArn": message.TopicArn,
         "SNS-Subject": message.Subject,
         "AWS-Account-ID": aws_account_id[4],
-        "source": aws_account_id[4],
-        "short_message": message.Message,
+        // "source": aws_account_id[4],                     // Graylog does not seem to care about this and always displays source as the server.js's ip.
+        "short_message": message.Message,                   // Don't worry; if the SNS message contains JSON we will try and parse it and post each key->value into Graylog below.
         "timestamp": moment(message.Timestamp).unix()
     };
 
-    gelf.emit('gelf.log', message);
+    if(isJson(message.Message)) {
+
+        // Do some cleaning ... It seems Graylog does not like key's that have a space in the name when transmitting GELF, let's replace with underscores...
+        parsed_message = JSON.parse(message.Message)
+
+        var clean_gelf_objects = {};
+        for (var key in parsed_message) {
+            clean_gelf_objects[key.replace(/ /g, '_')] = parsed_message[key];
+        }
+
+        var graylog_data = _.extend(clean_gelf_objects, server_message);
+
+        if(graylog_data.hasOwnProperty('Event_Message')){
+            graylog_data.short_message = graylog_data.Event_Message
+        } else {
+            graylog_data.short_message = "-"; // gelf class by default fills with string "Gelf Shortmessage" if found null...
+        }
+
+    } else { 
+        var graylog_data = server_message;
+    }
+
+    gelf.emit('gelf.log', graylog_data);
 
 });
 
@@ -97,6 +129,7 @@ console.log("   - Gelf Chunk Size:" + GELF_CHUNK_SIZE);
 console.log("   - Gelf Transport Type:" + GELF_TRANSPORT_TYPE);
 console.log("   - Gelf Server Address:" + GELF_SERVER);
 console.log("   - Gelf Server Port:" + GELF_SERVER_PORT);
+if(process.env.CONSOLE_DEBUG) console.log("   - [Debug mode on]");
 
 console.log("\n");
 

@@ -12,6 +12,7 @@ npm install
 #### To run on beanstalk:
 - Zip up package.json and any required files
 - Upload ZIP to beanstalk and it will be deployed!
+- Be sure to set configuration options as environment variables in beanstalk, you will need to run direct as a service and not proxy-pass via Nginx.
 
 #### To use:
 Setup SNS to point to the HTTP URL of your service, the service will auto-confirm any new SNS registration topics!
@@ -29,7 +30,7 @@ Setup SNS to point to the HTTP URL of your service, the service will auto-confir
 //      GELF_TRANSPORT_TYPE (String, either 'wan' or 'lan', defaults to 'wan')
 ```
 
-#### Installing as a service:
+#### Installing as a service (not required if running via Beanstalk):
 
 ```bash
 mkdir -p /opt && cd /opt
@@ -46,3 +47,10 @@ mkdir -p /var/run/forever && chmod 777 /var/run/forever
 ```
 
 Be sure to set any changes to your environment in set_env.sh located in the 'additional' directory.
+
+#### Useful information:
+
+- Will parse any JSON objects received in the SNS messages as Graylog fields.
+    - When parsing JSON object, if the object contains: 'Event_Message' this will be defaulted as the 'message' field in Graylog... If you want to set a custom message you need to include 'Event_Message' in your JSON object.
+- Currently does not support proxy passing via server such as Nginx.
+
