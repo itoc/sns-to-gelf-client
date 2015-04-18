@@ -113,7 +113,6 @@ http.createServer(function(req, res) {
     }
 
     if(req.headers['x-amz-sns-message-type']) { 
-        // console.log(req.headers['x-amz-sns-message-type'])
         return client(req, res);
     }
 

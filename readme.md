@@ -1,7 +1,7 @@
 SNS to GELF Client
 ================
 
-This program will run as a simple HTTP server allowing SNS to push messages into Graylog in GELF format
+This program will run as a simple HTTP server allowing SNS to push messages into Graylog via the standardised GELF format
 
 ##### To install / run locally:
 
