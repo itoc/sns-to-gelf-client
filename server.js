@@ -13,12 +13,12 @@
 //      CONSOLE_DEBUG       (String, true/false - provides verbose debugging)
 //      GELF_SERVER         (String, provide hostname or IP)
 //      GELF_SERVER_PORT    (Integer, defaults to: 12201)
-//      GELF_CHUNK_SIZE     (Integer, defaults to: 1420)
+//      GELF_CHUNK_SIZE     (Integer, defaults to: 1420 - set to 8154 if you're running on LAN nor WAN.)
 //      GELF_TRANSPORT_TYPE (String, either 'wan' or 'lan', defaults to 'wan')
 
 // --------------------------------------------------------------------------------------------------------------
 
-if(process.env.HTTP_LISTEN_PORT) {
+if(process.env.HTTP_LISTEN_PORT) { 
     var server_listen_port = process.env.HTTP_LISTEN_PORT;
 } else {
     var server_listen_port = 9000;
@@ -61,7 +61,7 @@ var gelf = new Gelf({
     graylogHostname: GELF_SERVER,
     connection: GELF_TRANSPORT_TYPE,
     maxChunkSizeWan: GELF_CHUNK_SIZE,
-    maxChunkSizeLan: 8154
+    maxChunkSizeLan: GELF_CHUNK_SIZE
 });
 
 var auth = {

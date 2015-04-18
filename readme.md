@@ -28,3 +28,19 @@ Setup SNS to point to the HTTP URL of your service, the service will auto-confir
 //      GELF_CHUNK_SIZE     (Integer, defaults to: 1420)
 //      GELF_TRANSPORT_TYPE (String, either 'wan' or 'lan', defaults to 'wan')
 ```
+
+##### Installing as a service
+
+```bash
+mkdir -p /opt && cd /opt
+git clone https://git.itoc.com.au/itoc_internal/sns-to-gelf-graylog-client.git
+
+cp additional/itoc-sns-gelf-client.initd /etc/init.d/itoc-sns-gelf-client
+chmod +x /etc/init.d/itoc-sns-gelf-client
+chkconfig --add itoc-sns-gelf-client
+
+npm install forever -g
+mkdir -p /var/run/forever && chmod 777 /var/run/forever
+```
+
+Be sure to set any changes to your environment in set_env.sh located in the 'additional' directory.
