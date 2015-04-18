@@ -34,7 +34,7 @@ NAME=sns-to-gelf-graylog-client
 SOURCE_DIR=/opt/sns-to-gelf-graylog-client
 SOURCE_FILE=server.js
  
-user=node
+user=root
 pidfile=/var/run/$NAME.pid
 logfile=/var/log/$NAME.log
 forever_dir=/var/run/forever
@@ -64,7 +64,9 @@ start() {
     # Launch the application
     daemon --user=root \
       $forever start -p $forever_dir --pidFile $pidfile -l $logfile \
-      -a -d $SOURCE_DIR/$SOURCE_FILE
+      -a -d $SOURCE_DIR/$SOURCE_FILE \
+      --minUptime 1000 \
+      --spinSleepTime 1000
     RETVAL=$?
   else
     echo "Instance already running"

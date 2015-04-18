@@ -9,7 +9,7 @@
 #
 # Please change the following configuration options to suit your environment.
 
-export HTTP_LISTEN_PORT=9000
+export HTTP_LISTEN_PORT=9090 # Graylog likes to use 9000 by default.
 export GELF_SERVER="127.0.0.1"
 export GELF_SERVER_PORT=12201
 export GELF_CHUNK_SIZE=8154
