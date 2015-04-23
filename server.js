@@ -83,14 +83,15 @@ var client = SNSClient(auth, function(err, message) {
 
     if(process.env.CONSOLE_DEBUG) console.log(message);
 
-    var aws_account_id = message.TopicArn.split(":");
+    var sns_topic_split = message.TopicArn.split(":");
     var server_message = {
         "Type": message['Type'],
         "facility": "AWS-SNS",
         "SNS-MessageId": message.MessageId,
         "SNS-TopicArn": message.TopicArn,
         "SNS-Subject": message.Subject,
-        "AWS-Account-ID": aws_account_id[4],
+        "AWS-Account-ID": sns_topic_split[4],
+        "AWS-SNS-Region": sns_topic_split[3],
         // "source": aws_account_id[4],                     // Graylog does not seem to care about this and always displays source as the server.js's ip.
         "short_message": message.Message,                   // Don't worry; if the SNS message contains JSON we will try and parse it and post each key->value into Graylog below.
         "timestamp": moment(message.Timestamp).unix()
