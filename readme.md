@@ -36,7 +36,7 @@ Setup SNS to point to the HTTP URL of your service, the service will auto-confir
 mkdir -p /opt && cd /opt
 git clone https://git.itoc.com.au/itoc_internal/sns-to-gelf-graylog-client.git
 
-npm install
+cd sns-to-gelf-graylog-client && npm install
 
 cp additional/itoc-sns-gelf-client.initd /etc/init.d/itoc-sns-gelf-client
 chmod +x /etc/init.d/itoc-sns-gelf-client
