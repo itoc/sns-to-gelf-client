@@ -49,6 +49,32 @@ if(process.env.GELF_SERVER_PORT) {
     var GELF_SERVER_PORT = 12201;
 }
 
+if(process.env.SNS_AUTH) {
+    if(process.env.SNS_AUTH == "true") {
+
+        var SNS_AUTH_REGION = process.env.SNS_AUTH_REGION || ""
+        var SNS_AWS_ACCOUNT = process.env.SNS_AUTH_REGION || ""
+        var SNS_TOPIC = process.env.SNS_TOPIC || ""
+
+        if(SNS_AUTH_REGION == "" && SNS_TOPIC == "") { 
+            var auth = {
+                account: process.env.SNS_AWS_ACCOUNT
+            };
+        } else {
+            var auth = {
+                region: process.env.SNS_AUTH_REGION,
+                account: process.env.SNS_AWS_ACCOUNT,
+                topic: process.env.SNS_TOPIC
+            };            
+        }
+
+    } else {
+        var auth = { verify: false };
+    }
+} else {
+    var auth = { verify: false };
+}
+
 // --------------------------------------------------------------------------------------------------------------
 
 var http = require('http'),
@@ -64,10 +90,6 @@ var gelf = new Gelf({
     maxChunkSizeWan: GELF_CHUNK_SIZE,
     maxChunkSizeLan: GELF_CHUNK_SIZE
 });
-
-var auth = {
-    verify: false
-};
 
 function isJson(str) {
     try {
